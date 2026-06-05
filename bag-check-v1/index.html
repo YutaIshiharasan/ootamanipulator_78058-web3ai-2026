@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>外出前持ち物チェッカー | Bag Check v1</title>
+  <!-- Google Fonts (Outfit & Noto Sans JP) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+  <!-- CSS Link -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="background-decor decor-1"></div>
+  <div class="background-decor decor-2"></div>
+
+  <div class="app-container">
+    <header class="app-header">
+      <div class="logo">
+        <span class="logo-icon">🎒</span>
+        <h1>Bag Check</h1>
+      </div>
+      <p class="subtitle">お出かけ前の忘れ物ゼロチェッカー</p>
+    </header>
+
+    <!-- 場面選択タブ -->
+    <section class="scene-selector">
+      <h2>現在の予定・場面を選択</h2>
+      <div class="tabs">
+        <button class="tab-btn active" data-scene="school">
+          <span class="tab-icon">🏫</span>
+          <span class="tab-label">学校</span>
+        </button>
+        <button class="tab-btn" data-scene="work">
+          <span class="tab-icon">💼</span>
+          <span class="tab-label">バイト</span>
+        </button>
+        <button class="tab-btn" data-scene="play">
+          <span class="tab-icon">🎮</span>
+          <span class="tab-label">遊び</span>
+        </button>
+        <button class="tab-btn" data-scene="rainy">
+          <span class="tab-icon">☔</span>
+          <span class="tab-label">雨の日</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- 進捗ステータス -->
+    <section class="progress-section">
+      <div class="progress-info">
+        <span id="remaining-count">残り 0 個</span>
+        <span id="progress-percentage">0%</span>
+      </div>
+      <div class="progress-bar-container">
+        <div id="progress-bar" class="progress-bar" style="width: 0%;"></div>
+      </div>
+    </section>
+
+    <!-- 持ち物チェックリスト -->
+    <main class="list-section">
+      <ul id="item-list" class="item-list">
+        <!-- JSで動的に追加されます -->
+      </ul>
+
+      <!-- 持ち物追加フォーム（VPCの「自分で持ち物を追加できるようにする」対応） -->
+      <form id="add-item-form" class="add-item-form">
+        <input type="text" id="new-item-name" placeholder="新しい持ち物を追加..." required>
+        <button type="submit" class="add-btn">
+          <span class="add-icon">＋</span>
+        </button>
+      </form>
+    </main>
+
+    <!-- 準備完了お祝いモーダル -->
+    <div id="celebration-modal" class="modal">
+      <div class="modal-content">
+        <div class="confetti-container">🎉 ✨ 🎒 🚀 ✨ 🎉</div>
+        <h2>準備完了！</h2>
+        <p>忘れ物はありません。気をつけていってらっしゃい！</p>
+        <button id="close-modal-btn" class="close-btn">閉じる</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JS Link -->
+  <script src="app.js"></script>
+</body>
+</html>
