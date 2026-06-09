@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>外出前持ち物チェッカー v2.0 | Bag Check</title>
+  <!-- Google Fonts (Outfit & Noto Sans JP) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+  <!-- CSS Link -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="background-decor decor-1"></div>
+  <div class="background-decor decor-2"></div>
+
+  <div class="app-container">
+    <!-- ヘッダーとv2バッジ -->
+    <header class="app-header">
+      <div class="logo-area">
+        <div class="logo">
+          <span class="logo-icon">🎒</span>
+          <h1>Bag Check</h1>
+        </div>
+        <span class="v2-badge">v2.0</span>
+      </div>
+      <p class="subtitle">自分専用にカスタマイズ＆出発前の最終チェック</p>
+    </header>
+
+    <!-- 場面選択タブ -->
+    <section class="scene-selector">
+      <h2>現在の予定・場面</h2>
+      <div class="tabs">
+        <button class="tab-btn active" data-scene="school">
+          <span class="tab-icon">🏫</span>
+          <span class="tab-label">学校</span>
+        </button>
+        <button class="tab-btn" data-scene="work">
+          <span class="tab-icon">💼</span>
+          <span class="tab-label">バイト</span>
+        </button>
+        <button class="tab-btn" data-scene="play">
+          <span class="tab-icon">🎮</span>
+          <span class="tab-label">遊び</span>
+        </button>
+        <button class="tab-btn" data-scene="rainy">
+          <span class="tab-icon">☔</span>
+          <span class="tab-label">雨の日</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- 進捗ステータス -->
+    <section class="progress-section">
+      <div class="progress-info">
+        <span id="remaining-count">残り 0 個</span>
+        <span id="progress-percentage">0%</span>
+      </div>
+      <div class="progress-bar-container">
+        <div id="progress-bar" class="progress-bar" style="width: 0%;"></div>
+      </div>
+    </section>
+
+    <!-- 持ち物チェックリスト -->
+    <main class="list-section">
+      <div class="list-header">
+        <h3>持ち物リスト</h3>
+        <button id="reset-btn" class="reset-btn" title="初期状態に戻す">🔄 リセット</button>
+      </div>
+      <ul id="item-list" class="item-list">
+        <!-- JSで動的に追加されます -->
+      </ul>
+
+      <!-- 持ち物追加フォーム（重要フラグ付き） -->
+      <form id="add-item-form" class="add-item-form">
+        <div class="input-row">
+          <input type="text" id="new-item-name" placeholder="新しい持ち物を追加..." required>
+          <button type="submit" class="add-btn">
+            <span class="add-icon">＋</span>
+          </button>
+        </div>
+        <div class="option-row">
+          <label class="important-toggle-label">
+            <input type="checkbox" id="new-item-important">
+            <span class="custom-toggle"></span>
+            <span class="toggle-text">🔥 重要アイテム（スマホ・鍵など）として登録</span>
+          </label>
+        </div>
+      </form>
+    </main>
+  </div>
+
+  <!-- 出発前最終確認モーダル (v2追加) -->
+  <div id="final-check-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span class="modal-logo">🔑 💡 🚀</span>
+        <h2>出発前の最終確認！</h2>
+        <p class="modal-desc">持ち物はバッチリです！最後に安全確認を行いましょう。</p>
+      </div>
+      
+      <div class="final-check-list-container">
+        <ul class="final-check-list">
+          <li>
+            <label class="final-check-item">
+              <input type="checkbox" class="final-check-cb" data-index="0">
+              <span class="custom-checkbox"></span>
+              <span class="final-check-text">玄関の鍵は閉めましたか？ 🔑</span>
+            </label>
+          </li>
+          <li>
+            <label class="final-check-item">
+              <input type="checkbox" class="final-check-cb" data-index="1">
+              <span class="custom-checkbox"></span>
+              <span class="final-check-text">エアコンや電気は消しましたか？ 💡</span>
+            </label>
+          </li>
+          <li>
+            <label class="final-check-item">
+              <input type="checkbox" class="final-check-cb" data-index="2">
+              <span class="custom-checkbox"></span>
+              <span class="final-check-text">窓のロックは大丈夫ですか？ 🪟</span>
+            </label>
+          </li>
+        </ul>
+      </div>
+
+      <button id="go-btn" class="go-btn" disabled>出発する！🚀</button>
+      <button id="close-modal-btn" class="close-btn-secondary">戻る</button>
+    </div>
+  </div>
+
+  <!-- 出発アニメーションオーバーレイ -->
+  <div id="departure-screen" class="departure-screen">
+    <div class="departure-content">
+      <div class="rocket-anim">🚀</div>
+      <h2>いってらっしゃい！</h2>
+      <p>忘れ物ゼロで、今日も良い一日を！</p>
+    </div>
+  </div>
+
+  <!-- JS Link -->
+  <script src="app.js"></script>
+</body>
+</html>

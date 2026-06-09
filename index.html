@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bag Check Portal | 忘れ物ゼロチェッカー</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-gradient: linear-gradient(135deg, hsl(230, 45%, 15%), hsl(280, 50%, 15%));
+      --card-bg: hsla(260, 30%, 20%, 0.6);
+      --card-border: hsla(260, 30%, 40%, 0.3);
+      --text-main: hsl(260, 20%, 95%);
+      --text-muted: hsl(260, 15%, 75%);
+      --primary: hsl(275, 85%, 65%);
+      --radius-lg: 24px;
+      --radius-md: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', 'Noto Sans JP', sans-serif;
+      color: var(--text-main);
+      background: var(--bg-gradient);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Decorative Background Blobs */
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.35;
+      z-index: 1;
+    }
+    .blob-1 {
+      width: 400px;
+      height: 400px;
+      background: hsl(270, 90%, 50%);
+      top: -100px;
+      left: -100px;
+      animation: float 15s infinite alternate ease-in-out;
+    }
+    .blob-2 {
+      width: 500px;
+      height: 500px;
+      background: hsl(320, 90%, 55%);
+      bottom: -150px;
+      right: -100px;
+      animation: float 20s infinite alternate-reverse ease-in-out;
+    }
+
+    @keyframes float {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(50px, 50px) scale(1.15); }
+    }
+
+    /* Portal Container */
+    .portal-container {
+      width: 100%;
+      max-width: 600px;
+      background: var(--card-bg);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      padding: 40px;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+      z-index: 2;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    .portal-header h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, hsl(275, 100%, 75%), hsl(325, 100%, 70%));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+
+    .portal-header p {
+      font-size: 1rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* Grid for Portal Cards */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .portal-card {
+      background: hsla(260, 30%, 15%, 0.4);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .portal-card:hover {
+      background: hsla(260, 30%, 30%, 0.6);
+      transform: translateY(-6px);
+      border-color: hsla(275, 85%, 65%, 0.5);
+      box-shadow: 0 12px 24px -5px rgba(150, 60, 255, 0.25);
+    }
+
+    .card-icon {
+      font-size: 3rem;
+      transition: transform 0.3s ease;
+    }
+
+    .portal-card:hover .card-icon {
+      transform: scale(1.15) rotate(4deg);
+    }
+
+    .portal-card h2 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .portal-card .version {
+      font-size: 0.75rem;
+      background: var(--primary);
+      color: white;
+      padding: 2px 8px;
+      border-radius: 99px;
+      font-weight: 700;
+    }
+
+    .portal-card.v2 .version {
+      background: linear-gradient(135deg, hsl(45, 100%, 55%), hsl(25, 100%, 50%));
+      color: hsl(260, 45%, 8%);
+      box-shadow: 0 0 8px hsla(45, 100%, 55%, 0.3);
+    }
+
+    .portal-card p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .footer {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      opacity: 0.8;
+      border-top: 1px solid var(--card-border);
+      padding-top: 15px;
+    }
+
+    @media (max-width: 500px) {
+      .cards-grid {
+        grid-template-columns: 1fr;
+      }
+      .portal-container {
+        padding: 30px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+
+  <div class="portal-container">
+    <header class="portal-header">
+      <h1>Bag Check Portal</h1>
+      <p>お出かけ前の忘れ物ゼロチェッカー プロトタイプ一覧</p>
+    </header>
+
+    <div class="cards-grid">
+      <!-- v1 Card -->
+      <a href="./bag-check-v1/index.html" class="portal-card v1">
+        <span class="card-icon">🎒</span>
+        <h2>Bag Check v1</h2>
+        <span class="version">第3回宿題</span>
+        <p>外出前に「場面」を選んで持ち物をチェックするシンプルな基本アプリです。</p>
+      </a>
+
+      <!-- v2 Card -->
+      <a href="./bag-check-v2/index.html" class="portal-card v2">
+        <span class="card-icon">🚀</span>
+        <h2>Bag Check v2</h2>
+        <span class="version">第6回宿題</span>
+        <p>重要アイテム強調、出発前の安全確認リスト、ローカル保存を搭載した進化版です。</p>
+      </a>
+    </div>
+
+    <footer class="footer">
+      web3・AI概論 2026 第3回＆第6回宿題提出物 | ootamanipulator_78058
+    </footer>
+  </div>
+</body>
+</html>
