@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bag Check v3</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Noto Sans JP", system-ui, sans-serif;
+      background: linear-gradient(135deg, #1b102b, #4b1268, #ff8ecf);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 32px 16px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 720px;
+      background: rgba(28, 18, 48, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 28px;
+      padding: 28px;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 40px;
+      color: #ff7df3;
+    }
+
+    .badge {
+      display: inline-block;
+      margin-left: 8px;
+      padding: 4px 10px;
+      background: #ffb000;
+      color: #2b1740;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .subtitle {
+      color: #d8cce8;
+      margin-top: 8px;
+    }
+
+    .section {
+      margin-top: 24px;
+    }
+
+    .section h2 {
+      font-size: 20px;
+      margin-bottom: 12px;
+    }
+
+    .scenes {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .scene-btn {
+      border: none;
+      border-radius: 18px;
+      padding: 18px 8px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #dcd0e8;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .scene-btn.active {
+      background: linear-gradient(135deg, #8f4bff, #ff75e6);
+      color: #fff;
+      box-shadow: 0 10px 24px rgba(255, 117, 230, 0.35);
+    }
+
+    .time-box {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    input[type="time"], input[type="text"] {
+      width: 100%;
+      border: none;
+      outline: none;
+      border-radius: 16px;
+      padding: 14px;
+      font-size: 16px;
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+    }
+
+    input::placeholder {
+      color: #bbaaca;
+    }
+
+    .info-card {
+      background: rgba(255, 255, 255, 0.09);
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .info-label {
+      color: #cdbde0;
+      font-size: 13px;
+    }
+
+    .info-value {
+      font-size: 22px;
+      font-weight: bold;
+      margin-top: 4px;
+    }
+
+    .risk {
+      padding: 14px;
+      border-radius: 16px;
+      font-weight: bold;
+      text-align: center;
+      margin-top: 12px;
+    }
+
+    .risk.high {
+      background: rgba(255, 70, 70, 0.25);
+      border: 1px solid rgba(255, 70, 70, 0.8);
+    }
+
+    .risk.mid {
+      background: rgba(255, 180, 40, 0.25);
+      border: 1px solid rgba(255, 180, 40, 0.8);
+    }
+
+    .risk.low {
+      background: rgba(70, 220, 130, 0.25);
+      border: 1px solid rgba(70, 220, 130, 0.8);
+    }
+
+    .progress-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    .progress {
+      width: 100%;
+      height: 10px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #8f4bff, #ff75e6);
+      transition: width 0.25s;
+    }
+
+    .items {
+      margin-top: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-height: 360px;
+      overflow-y: auto;
+      padding-right: 6px;
+    }
+
+    .item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .item.important {
+      border: 1px solid #ffb000;
+      background: rgba(255, 176, 0, 0.12);
+    }
+
+    .item input {
+      width: 22px;
+      height: 22px;
+      accent-color: #c45cff;
+    }
+
+    .item span {
+      flex: 1;
+      font-size: 17px;
+      font-weight: bold;
+    }
+
+    .important-tag {
+      color: #ffb000;
+      font-size: 13px;
+      margin-right: 6px;
+    }
+
+    .delete-btn {
+      background: none;
+      border: none;
+      color: #d8cce8;
+      font-size: 22px;
+      cursor: pointer;
+    }
+
+    .add-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .add-btn, .reset-btn {
+      border: none;
+      border-radius: 16px;
+      padding: 14px 18px;
+      background: #b44dff;
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .reset-btn {
+      width: 100%;
+      margin-top: 12px;
+      background: rgba(255, 255, 255, 0.14);
+    }
+
+    .complete {
+      margin-top: 18px;
+      padding: 18px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #35d07f, #84ffbc);
+      color: #10261a;
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      display: none;
+    }
+
+    .hint {
+      margin-top: 16px;
+      color: #d8cce8;
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    @media (max-width: 600px) {
+      .scenes {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .time-box {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 32px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header>
+      <h1>🎒 Bag Check <span class="badge">v3.0</span></h1>
+      <p class="subtitle">出発前に忘れ物リスクを見える化するチェックアプリ</p>
+    </header>
+
+    <section class="section">
+      <h2>現在の予定・場面</h2>
+      <div class="scenes" id="sceneButtons"></div>
+    </section>
+
+    <section class="section">
+      <h2>出発予定時刻</h2>
+      <div class="time-box">
+        <input type="time" id="departureTime" />
+        <div class="info-card">
+          <div class="info-label">出発まで</div>
+          <div class="info-value" id="timeLeft">未設定</div>
+        </div>
+      </div>
+      <div class="risk high" id="riskBox">忘れ物リスク：高</div>
+    </section>
+
+    <section class="section">
+      <div class="progress-row">
+        <div id="remainingText">残り 0 個</div>
+        <div id="percentText">0%</div>
+      </div>
+      <div class="progress">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>持ち物リスト</h2>
+      <div class="items" id="items"></div>
+
+      <div class="add-row">
+        <input type="text" id="newItemInput" placeholder="新しい持ち物を追加..." />
+        <button class="add-btn" id="addBtn">＋</button>
+      </div>
+
+      <button class="reset-btn" id="resetBtn">この場面をリセット</button>
+
+      <div class="complete" id="completeBox">
+        ✅ 出発前チェック完了！忘れ物リスクは低いです。
+      </div>
+
+      <p class="hint">
+        v3では、出発予定時刻・残り時間・重要アイテム・忘れ物リスクを追加しました。<br>
+        外出直前に「何を優先して確認すべきか」が分かるようにしています。
+      </p>
+    </section>
+  </main>
+
+  <script>
+    const scenes = {
+      school: {
+        label: "学校",
+        icon: "🏫",
+        items: [
+          { name: "財布・定期入れ", important: true },
+          { name: "スマートフォン", important: true },
+          { name: "自宅の鍵", important: true },
+          { name: "学生証", important: true },
+          { name: "筆記用具", important: false },
+          { name: "ノートPC・充電器", important: false },
+          { name: "水筒・ペットボトル", important: false }
+        ]
+      },
+      work: {
+        label: "バイト",
+        icon: "💼",
+        items: [
+          { name: "財布・定期入れ", important: true },
+          { name: "スマートフォン", important: true },
+          { name: "自宅の鍵", important: true },
+          { name: "制服・エプロン", important: true },
+          { name: "勤務用メモ", important: false },
+          { name: "飲み物", important: false }
+        ]
+      },
+      play: {
+        label: "遊び",
+        icon: "🎮",
+        items: [
+          { name: "財布", important: true },
+          { name: "スマートフォン", important: true },
+          { name: "自宅の鍵", important: true },
+          { name: "イヤホン", important: false },
+          { name: "モバイルバッテリー", important: false }
+        ]
+      },
+      rain: {
+        label: "雨の日",
+        icon: "☔",
+        items: [
+          { name: "財布・定期入れ", important: true },
+          { name: "スマートフォン", important: true },
+          { name: "自宅の鍵", important: true },
+          { name: "傘", important: true },
+          { name: "タオル", important: false },
+          { name: "替えの靴下", important: false }
+        ]
+      }
+    };
+
+    let currentScene = "school";
+    let state = loadState();
+
+    const sceneButtons = document.getElementById("sceneButtons");
+    const itemsEl = document.getElementById("items");
+    const remainingText = document.getElementById("remainingText");
+    const percentText = document.getElementById("percentText");
+    const progressFill = document.getElementById("progressFill");
+    const completeBox = document.getElementById("completeBox");
+    const riskBox = document.getElementById("riskBox");
+    const departureTime = document.getElementById("departureTime");
+    const timeLeft = document.getElementById("timeLeft");
+    const newItemInput = document.getElementById("newItemInput");
+
+    function loadState() {
+      const saved = localStorage.getItem("bagCheckV3");
+      if (saved) return JSON.parse(saved);
+
+      const initial = {};
+      Object.keys(scenes).forEach(key => {
+        initial[key] = scenes[key].items.map(item => ({
+          ...item,
+          checked: false
+        }));
+      });
+      return initial;
+    }
+
+    function saveState() {
+      localStorage.setItem("bagCheckV3", JSON.stringify(state));
+    }
+
+    function renderScenes() {
+      sceneButtons.innerHTML = "";
+      Object.keys(scenes).forEach(key => {
+        const btn = document.createElement("button");
+        btn.className = "scene-btn" + (key === currentScene ? " active" : "");
+        btn.innerHTML = `<div>${scenes[key].icon}</div><div>${scenes[key].label}</div>`;
+        btn.onclick = () => {
+          currentScene = key;
+          render();
+        };
+        sceneButtons.appendChild(btn);
+      });
+    }
+
+    function renderItems() {
+      itemsEl.innerHTML = "";
+      state[currentScene].forEach((item, index) => {
+        const row = document.createElement("div");
+        row.className = "item" + (item.important ? " important" : "");
+
+        row.innerHTML = `
+          <input type="checkbox" ${item.checked ? "checked" : ""}>
+          <span>${item.important ? '<span class="important-tag">🔥重要</span>' : ""}${item.name}</span>
+          <button class="delete-btn">×</button>
+        `;
+
+        row.querySelector("input").onchange = e => {
+          item.checked = e.target.checked;
+          saveState();
+          render();
+        };
+
+        row.querySelector(".delete-btn").onclick = () => {
+          state[currentScene].splice(index, 1);
+          saveState();
+          render();
+        };
+
+        itemsEl.appendChild(row);
+      });
+    }
+
+    function updateProgress() {
+      const items = state[currentScene];
+      const total = items.length;
+      const checked = items.filter(item => item.checked).length;
+      const remaining = total - checked;
+      const percent = total === 0 ? 100 : Math.round((checked / total) * 100);
+
+      remainingText.textContent = `残り ${remaining} 個`;
+      percentText.textContent = `${percent}%`;
+      progressFill.style.width = `${percent}%`;
+      completeBox.style.display = remaining === 0 && total > 0 ? "block" : "none";
+
+      updateRisk();
+    }
+
+    function updateRisk() {
+      const items = state[currentScene];
+      const remainingImportant = items.filter(item => item.important && !item.checked).length;
+      const remaining = items.filter(item => !item.checked).length;
+
+      riskBox.className = "risk";
+
+      if (remainingImportant >= 2 || remaining >= 5) {
+        riskBox.classList.add("high");
+        riskBox.textContent = `忘れ物リスク：高（重要アイテム未確認 ${remainingImportant} 個）`;
+      } else if (remainingImportant === 1 || remaining >= 2) {
+        riskBox.classList.add("mid");
+        riskBox.textContent = `忘れ物リスク：中（まだ確認が必要です）`;
+      } else {
+        riskBox.classList.add("low");
+        riskBox.textContent = `忘れ物リスク：低（出発できそうです）`;
+      }
+    }
+
+    function updateTimeLeft() {
+      const value = departureTime.value;
+      if (!value) {
+        timeLeft.textContent = "未設定";
+        return;
+      }
+
+      const now = new Date();
+      const [hour, minute] = value.split(":").map(Number);
+      const target = new Date();
+      target.setHours(hour, minute, 0, 0);
+
+      if (target < now) {
+        target.setDate(target.getDate() + 1);
+      }
+
+      const diffMs = target - now;
+      const diffMin = Math.floor(diffMs / 60000);
+      const h = Math.floor(diffMin / 60);
+      const m = diffMin % 60;
+
+      timeLeft.textContent = h > 0 ? `${h}時間${m}分` : `${m}分`;
+    }
+
+    document.getElementById("addBtn").onclick = () => {
+      const name = newItemInput.value.trim();
+      if (!name) return;
+
+      state[currentScene].push({
+        name,
+        important: false,
+        checked: false
+      });
+
+      newItemInput.value = "";
+      saveState();
+      render();
+    };
+
+    document.getElementById("resetBtn").onclick = () => {
+      state[currentScene] = scenes[currentScene].items.map(item => ({
+        ...item,
+        checked: false
+      }));
+      saveState();
+      render();
+    };
+
+    departureTime.onchange = updateTimeLeft;
+    setInterval(updateTimeLeft, 1000);
+
+    function render() {
+      renderScenes();
+      renderItems();
+      updateProgress();
+      updateTimeLeft();
+    }
+
+    render();
+  </script>
+</body>
+</html>
