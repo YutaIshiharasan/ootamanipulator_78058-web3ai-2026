@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bag Check v4.0 | 忘れ物ゼロお出かけ継続アプリ</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Outfit:wght@400;600;800;900&display=swap" rel="stylesheet">
+  <!-- CSS Link -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="background-decor decor-1"></div>
+  <div class="background-decor decor-2"></div>
+
+  <div class="app-container">
+    <!-- ヘッダーと連続日数バッジ -->
+    <header class="app-header">
+      <div class="header-top">
+        <div class="logo">
+          <span class="logo-icon">🎒</span>
+          <h1>Bag Check <span class="v-badge">v4.0</span></h1>
+        </div>
+        <!-- 連続日数カウント表示 (v4追加) -->
+        <div class="streak-badge" id="streakBadge" title="毎日忘れ物チェックをして出発すると日数が増えます！">
+          <span class="streak-fire">🔥</span> 連続 <span id="streakCount">0</span> 日チェック中！
+        </div>
+      </div>
+      <p class="subtitle">自分専用にカスタマイズして、毎日の「忘れ物なし」を記録・継続するアプリ</p>
+    </header>
+
+    <!-- 朝の3ステップガイド表示 (v4追加) -->
+    <section class="step-guide">
+      <div class="step-item active" id="step1-indicator"><span class="step-num">1</span>出発設定</div>
+      <div class="step-arrow">➔</div>
+      <div class="step-item" id="step2-indicator"><span class="step-num">2</span>荷物チェック</div>
+      <div class="step-arrow">➔</div>
+      <div class="step-item" id="step3-indicator"><span class="step-num">3</span>最終安全確認</div>
+    </section>
+
+    <!-- メインレイアウト (2カラム) -->
+    <div class="main-layout">
+      <!-- 左カラム: 設定・マイテンプレート・スケジュール -->
+      <div class="left-panel">
+        <section class="panel-section">
+          <h2>予定・場面の選択</h2>
+          <!-- 場面選択タブ -->
+          <div class="tabs" id="sceneTabs">
+            <button class="tab-btn active" data-scene="school">🏫 学校</button>
+            <button class="tab-btn" data-scene="work">💼 バイト</button>
+            <button class="tab-btn" data-scene="play">🎮 遊び</button>
+            <button class="tab-btn" data-scene="rainy">☔ 雨の日</button>
+          </div>
+
+          <!-- マイテンプレートのロード機能 (v4追加) -->
+          <div class="my-templates-section">
+            <h3>📂 マイテンプレート</h3>
+            <div class="template-selector-row">
+              <select id="templateSelector">
+                <option value="">-- 保存したセットを選択 --</option>
+              </select>
+              <button id="loadTemplateBtn" class="action-btn">読込</button>
+              <button id="deleteTemplateBtn" class="action-btn danger">削除</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel-section">
+          <h2>出発予定</h2>
+          <div class="time-box">
+            <div class="time-input-container">
+              <label for="departureTime">出発時刻</label>
+              <input type="time" id="departureTime">
+            </div>
+            <div class="info-card">
+              <div class="info-label">出発まで</div>
+              <div class="info-value" id="timeLeft">未設定</div>
+            </div>
+          </div>
+          <!-- 忘れ物リスク判定 -->
+          <div class="risk-card" id="riskCard">
+            <div class="risk-title">忘れ物リスク</div>
+            <div class="risk-value" id="riskValue">低</div>
+            <p class="risk-reason" id="riskReason">持ち物がすべて準備されています。</p>
+          </div>
+        </section>
+      </div>
+
+      <!-- 右カラム: 持ち物チェックリスト -->
+      <div class="right-panel">
+        <section class="panel-section list-panel">
+          <div class="list-header">
+            <h2>持ち物リスト</h2>
+            <button id="resetSceneBtn" class="reset-btn-v4" title="初期状態に戻す">🔄 リセット</button>
+          </div>
+
+          <!-- 進捗状況 -->
+          <div class="progress-container">
+            <div class="progress-text-row">
+              <span id="remainingText">残り 0 個</span>
+              <span id="percentText">0%</span>
+            </div>
+            <div class="progress-bar-container">
+              <div id="progressBarFill" class="progress-bar-fill"></div>
+            </div>
+          </div>
+
+          <!-- アイテムリスト -->
+          <ul id="itemList" class="item-list">
+            <!-- JSで動的に構築されます -->
+          </ul>
+
+          <!-- 持ち物追加フォーム（重要トグル付き） -->
+          <form id="addItemForm" class="add-item-form-v4">
+            <div class="input-row">
+              <input type="text" id="newItemName" placeholder="新しい持ち物を追加..." required>
+              <button type="submit" class="add-btn-v4">＋</button>
+            </div>
+            <label class="important-checkbox-label">
+              <input type="checkbox" id="newItemImportant">
+              <span class="custom-toggle"></span>
+              <span class="toggle-text">🔥 重要アイテム（スマホ・鍵など）に設定</span>
+            </label>
+          </form>
+
+          <!-- 現在の構成をマイテンプレートとして保存 (v4追加) -->
+          <div class="save-template-container">
+            <div class="input-row">
+              <input type="text" id="newTemplateName" placeholder="現在の構成をマイテンプレート名として保存...">
+              <button id="saveTemplateBtn" class="action-btn primary">保存</button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- お出かけ履歴（ログ）セクション (v4追加) -->
+    <section class="history-section">
+      <h2>📅 お出かけ成功の記録 (忘れ物なし出発)</h2>
+      <div class="history-list" id="historyList">
+        <p class="empty-history-msg">出発するとここに「忘れ物なし」の記録が残ります！</p>
+      </div>
+    </section>
+
+    <!-- 価値検証用ユーザーフィードバックセクション (v4追加) -->
+    <section class="feedback-section">
+      <h2>📝 【検証】アプリ継続利用のアンケート</h2>
+      <p class="feedback-intro">このプロトタイプを体験していただきありがとうございます。ご意見をいただけると幸いです！</p>
+      
+      <form id="feedbackForm" class="feedback-form">
+        <div class="form-group">
+          <label>1. このアプリを今後も継続して使いたいですか？</label>
+          <div class="rating-options">
+            <label class="rating-label">
+              <input type="radio" name="feedbackRating" value="ぜひ使いたい" required>
+              <span class="rating-btn">ぜひ使いたい 😍</span>
+            </label>
+            <label class="rating-label">
+              <input type="radio" name="feedbackRating" value="まあまあ使いたい">
+              <span class="rating-btn">まあまあ使いたい 🙂</span>
+            </label>
+            <label class="rating-label">
+              <input type="radio" name="feedbackRating" value="あまり使いたくない">
+              <span class="rating-btn">あまり使いたくない 🙁</span>
+            </label>
+            <label class="rating-label">
+              <input type="radio" name="feedbackRating" value="使いたくない">
+              <span class="rating-btn">使いたくない 😡</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="feedbackComment">2. そう答えた理由や、ご要望・改善点を教えてください。</label>
+          <textarea id="feedbackComment" rows="3" placeholder="「〜機能が便利だった」「〜の動きが分かりづらかった」など、自由にご記入ください。" required></textarea>
+        </div>
+
+        <button type="submit" class="submit-feedback-btn">フィードバックを登録する</button>
+      </form>
+
+      <!-- フィードバック履歴一覧の表示 -->
+      <div class="feedback-results-container">
+        <h3>📊 登録済みのフィードバック一覧 (${scenesData.feedbacks ? scenesData.feedbacks.length : 0}件)</h3>
+        <div class="feedback-list" id="feedbackList">
+          <!-- JSでレンダリング -->
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- 出発前最終確認モーダル -->
+  <div id="finalCheckModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span class="modal-logo">🔑 💡 🪟</span>
+        <h2>出発前 最後の安全確認！</h2>
+        <p class="modal-desc">持ち物はすべてチェック完了しました。最後に戸締まりを確認しましょう。</p>
+      </div>
+
+      <div class="final-check-list-container">
+        <ul class="final-check-list">
+          <li>
+            <label class="final-check-item">
+              <input type="checkbox" class="final-check-cb" data-index="0">
+              <span class="custom-checkbox"></span>
+              <span class="final-check-text">玄関の鍵は閉めましたか？ 🔑</span>
+            </label>
+          </li>
+          <li>
+            <label class="final-check-item">
+              <input type="checkbox" class="final-check-cb" data-index="1">
+              <span class="custom-checkbox"></span>
+              <span class="final-check-text">エアコンやコタツ、電気は消しましたか？ 💡</span>
+            </label>
+          </li>
+          <li>
+            <label class="final-check-item">
+              <input type="checkbox" class="final-check-cb" data-index="2">
+              <span class="custom-checkbox"></span>
+              <span class="final-check-text">窓のロックは閉まっていますか？ 🪟</span>
+            </label>
+          </li>
+        </ul>
+      </div>
+
+      <button id="goBtn" class="go-btn" disabled>出発する！🚀</button>
+      <button id="closeModalBtn" class="close-btn-secondary">戻る</button>
+    </div>
+  </div>
+
+  <!-- 出発アニメーションオーバーレイ -->
+  <div id="departureScreen" class="departure-screen">
+    <div class="departure-content">
+      <div class="rocket-anim">🚀</div>
+      <h2>いってらっしゃい！</h2>
+      <p id="departureMsg">本日も忘れ物ゼロで、快適なお出かけを！</p>
+    </div>
+  </div>
+
+  <!-- JS Link -->
+  <script src="app.js"></script>
+</body>
+</html>
