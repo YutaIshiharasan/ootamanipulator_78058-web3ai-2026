@@ -833,7 +833,7 @@ input[type="time"] {
 /* Feedback Section (v4) */
 .feedback-section {
   background: hsla(280, 20%, 15%, 0.5);
-  border: 1px dashed var(--primary);
+  border: 1px solid var(--card-border);
   border-radius: var(--radius-md);
   padding: 24px;
   margin-top: 10px;

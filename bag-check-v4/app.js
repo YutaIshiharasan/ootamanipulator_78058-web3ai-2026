@@ -42,7 +42,6 @@ let scenesData = {};
 let myTemplates = {};
 let streak = { count: 0, lastCheckedDate: '' };
 let historyLog = [];
-let feedbacks = [];
 
 // DOM要素の取得
 const tabButtons = document.querySelectorAll('.tab-btn');
@@ -75,12 +74,8 @@ const step1Indicator = document.getElementById('step1-indicator');
 const step2Indicator = document.getElementById('step2-indicator');
 const step3Indicator = document.getElementById('step3-indicator');
 
-// 履歴・フィードバック・モーダル (v4)
 const streakCount = document.getElementById('streakCount');
 const historyList = document.getElementById('historyList');
-const feedbackForm = document.getElementById('feedbackForm');
-const feedbackComment = document.getElementById('feedbackComment');
-const feedbackList = document.getElementById('feedbackList');
 
 const finalCheckModal = document.getElementById('finalCheckModal');
 const finalCheckCbs = document.querySelectorAll('.final-check-cb');
@@ -156,18 +151,6 @@ function init() {
     }
   });
 
-  // フィードバック登録 (v4)
-  feedbackForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const rating = document.querySelector('input[name="feedbackRating"]:checked').value;
-    const comment = feedbackComment.value.trim();
-    if (rating && comment) {
-      addFeedback(rating, comment);
-      feedbackComment.value = '';
-      document.querySelector('input[name="feedbackRating"]:checked').checked = false;
-    }
-  });
-
   // モーダルイベント
   finalCheckCbs.forEach(cb => cb.addEventListener('change', checkModalStatus));
   goBtn.addEventListener('click', depart);
@@ -186,7 +169,6 @@ function init() {
   // 初回レンダリング
   renderList();
   renderHistory();
-  renderFeedbacks();
   updateStepGuide();
 }
 
@@ -227,14 +209,7 @@ function loadAllData() {
     historyLog = [];
   }
 
-  // 5. フィードバック (v4)
-  const savedFeedbacks = localStorage.getItem('bagCheck_v4_feedbacks');
-  if (savedFeedbacks) {
-    feedbacks = JSON.parse(savedFeedbacks);
-  } else {
-    feedbacks = [];
   }
-}
 
 // データ保存用ヘルパー
 function saveScenesData() {
@@ -595,52 +570,6 @@ function updateStreak(todayStr) {
   streak.lastCheckedDate = todayStr;
   localStorage.setItem('bagCheck_v4_streak', JSON.stringify(streak));
   updateStreakUI();
-}
-
-// 価値検証用フィードバック機能 (v4)
-function addFeedback(rating, comment) {
-  const today = new Date();
-  const dateStr = `${today.getFullYear()}/${String(today.getMonth() + 1).padStart(2, '0')}/${String(today.getDate()).padStart(2, '0')} ${String(today.getHours()).padStart(2, '0')}:${String(today.getMinutes()).padStart(2, '0')}`;
-
-  const newFeedback = {
-    rating: rating,
-    comment: comment,
-    date: dateStr
-  };
-
-  feedbacks.push(newFeedback);
-  localStorage.setItem('bagCheck_v4_feedbacks', JSON.stringify(feedbacks));
-  renderFeedbacks();
-  alert('フィードバックを登録しました。ご協力ありがとうございます！');
-}
-
-function renderFeedbacks() {
-  feedbackList.innerHTML = '';
-  // ヘッダーの件数表示を更新
-  const resultsHeader = document.querySelector('.feedback-results-container h3');
-  if (resultsHeader) {
-    resultsHeader.textContent = `📊 登録済みのフィードバック一覧 (${feedbacks.length}件)`;
-  }
-
-  if (feedbacks.length === 0) {
-    feedbackList.innerHTML = '<p class="empty-history-msg" style="text-align:center; padding:15px;">登録されたフィードバックはまだありません。</p>';
-    return;
-  }
-
-  // 最新順にレンダリング
-  const reversedFeedbacks = [...feedbacks].reverse();
-  reversedFeedbacks.forEach(fb => {
-    const card = document.createElement('div');
-    card.className = 'feedback-card';
-    card.innerHTML = `
-      <div class="feedback-card-header">
-        <span class="feedback-rating-badge">${fb.rating}</span>
-        <span class="feedback-time">${fb.date}</span>
-      </div>
-      <div class="feedback-comment">${escapeHtml(fb.comment)}</div>
-    `;
-    feedbackList.appendChild(card);
-  });
 }
 
 // HTMLエスケープヘルパー

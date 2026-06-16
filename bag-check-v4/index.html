@@ -144,49 +144,12 @@
       </div>
     </section>
 
-    <!-- 価値検証用ユーザーフィードバックセクション (v4追加) -->
+    <!-- フィードバックについて (v4修正) -->
     <section class="feedback-section">
-      <h2>📝 【検証】アプリ継続利用のアンケート</h2>
-      <p class="feedback-intro">このプロトタイプを体験していただきありがとうございます。ご意見をいただけると幸いです！</p>
-      
-      <form id="feedbackForm" class="feedback-form">
-        <div class="form-group">
-          <label>1. このアプリを今後も継続して使いたいですか？</label>
-          <div class="rating-options">
-            <label class="rating-label">
-              <input type="radio" name="feedbackRating" value="ぜひ使いたい" required>
-              <span class="rating-btn">ぜひ使いたい 😍</span>
-            </label>
-            <label class="rating-label">
-              <input type="radio" name="feedbackRating" value="まあまあ使いたい">
-              <span class="rating-btn">まあまあ使いたい 🙂</span>
-            </label>
-            <label class="rating-label">
-              <input type="radio" name="feedbackRating" value="あまり使いたくない">
-              <span class="rating-btn">あまり使いたくない 🙁</span>
-            </label>
-            <label class="rating-label">
-              <input type="radio" name="feedbackRating" value="使いたくない">
-              <span class="rating-btn">使いたくない 😡</span>
-            </label>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="feedbackComment">2. そう答えた理由や、ご要望・改善点を教えてください。</label>
-          <textarea id="feedbackComment" rows="3" placeholder="「〜機能が便利だった」「〜の動きが分かりづらかった」など、自由にご記入ください。" required></textarea>
-        </div>
-
-        <button type="submit" class="submit-feedback-btn">フィードバックを登録する</button>
-      </form>
-
-      <!-- フィードバック履歴一覧の表示 -->
-      <div class="feedback-results-container">
-        <h3>📊 登録済みのフィードバック一覧 (${scenesData.feedbacks ? scenesData.feedbacks.length : 0}件)</h3>
-        <div class="feedback-list" id="feedbackList">
-          <!-- JSでレンダリング -->
-        </div>
-      </div>
+      <h2>📝 フィードバックについて</h2>
+      <p class="feedback-intro" style="font-size: 0.95rem; line-height: 1.6; margin-bottom: 0;">
+        このアプリは価値検証用のプロトタイプです。使ってみた感想や、継続して使いたいかどうかは、LINE・Discord・口頭などで開発者に直接伝えてください。
+      </p>
     </section>
   </div>
 
